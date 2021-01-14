@@ -9,27 +9,19 @@
 
 #define NTHREADS  4
 
-/* Variaveis globais */
+/* Variáveis globais */
 int x = 0;
 pthread_mutex_t x_mutex;
 pthread_cond_t x_cond;
 
 /* Thread A */
 void *A (void *t) {
-  int boba1, boba2;
-
-  printf("A: Comecei\n");
-
-  /* faz alguma coisa pra gastar tempo... */
-  boba1=10000; boba2=-10000; while (boba2 < boba1) boba2++;
-
   printf("tudo bem?\n");
 
-  pthread_mutex_lock(&x_mutex);
+  pthread_mutex_lock(&x_mutex); // Entrando na seção crítica
   x++;
-  if (x==3) {
-      printf("A:  x = %d, vai sinalizar a condicao \n", x);
-      pthread_cond_signal(&x_cond);
+  if (x==2) {
+      pthread_cond_broadcast(&x_cond); // Desbloqueia as threads na fila caso thread A e thread B tenham rodado
   }
   pthread_mutex_unlock(&x_mutex);
 
@@ -38,20 +30,12 @@ void *A (void *t) {
 
 /* Thread B */
 void *B (void *t) {
-  int boba1, boba2;
-
-  printf("B: Comecei\n");
-
-  /* faz alguma coisa pra gastar tempo... */
-  boba1=10000; boba2=-10000; while (boba2 < boba1) boba2++;
-
   printf("bom dia\n");
 
-  pthread_mutex_lock(&x_mutex);
+  pthread_mutex_lock(&x_mutex); // Entrando na seção crítica
   x++;
-  if (x==3) {
-      printf("B:  x = %d, vai sinalizar a condicao \n", x);
-      pthread_cond_signal(&x_cond);
+  if (x==2) {
+      pthread_cond_broadcast(&x_cond); // Desbloqueia as threads na fila caso thread A e thread B tenham rodado
   }
   pthread_mutex_unlock(&x_mutex);
 
@@ -60,40 +44,32 @@ void *B (void *t) {
 
 /* Thread C */
 void *C (void *t) {
-  printf("C: Comecei\n");
-
-  pthread_mutex_lock(&x_mutex);
-  if (x > 3) {
-     printf("C: x= %d, vai se bloquear...\n", x);
+  pthread_mutex_lock(&x_mutex); // Entrando na seção crítica
+  if (x != 2) { // Caso x seja diferente de 2, uma das threads iniciais (A ou B) ainda não rodou, então thread C é bloqueada
      pthread_cond_wait(&x_cond, &x_mutex);
-     printf("C: sinal recebido e mutex realocado, x = %d\n", x);
   }
-  printf("até mais! x=%d\n",x);
   pthread_mutex_unlock(&x_mutex);
+  printf("até mais!\n");
   pthread_exit(NULL);
 }
 
 /* Thread D */
 void *D (void *t) {
-  printf("D: Comecei\n");
-
-  pthread_mutex_lock(&x_mutex);
-  if (x > 4) {
-     printf("D: x= %d, vai se bloquear...\n", x);
+  pthread_mutex_lock(&x_mutex); // Entrando na seção crítica
+  if (x != 2) { // Caso x seja diferente de 2, uma das threads iniciais (A ou B) ainda não rodou, então thread D é bloqueada
      pthread_cond_wait(&x_cond, &x_mutex);
-     printf("D: sinal recebido e mutex realocado, x = %d\n", x);
   }
-  printf("boa tarde x=%d\n",x);
   pthread_mutex_unlock(&x_mutex);
+  printf("boa tarde\n");
   pthread_exit(NULL);
 }
 
-/* Funcao principal */
+/* Função principal */
 int main(int argc, char *argv[]) {
   int i;
   pthread_t threads[NTHREADS];
 
-  /* Inicilaiza o mutex (lock de exclusao mutua) e a variavel de condicao */
+  /* Inicilaiza o mutex (lock de exclusão mútua) e a variável de condicao */
   pthread_mutex_init(&x_mutex, NULL);
   pthread_cond_init (&x_cond, NULL);
 
@@ -109,7 +85,7 @@ int main(int argc, char *argv[]) {
   }
   printf ("\nFIM\n");
 
-  /* Desaloca variaveis e termina */
+  /* Desaloca variáveis e termina */
   pthread_mutex_destroy(&x_mutex);
   pthread_cond_destroy(&x_cond);
 }
