@@ -21,10 +21,10 @@ void *A (void *t) {
   int boba1, boba2;
 
   printf("A: Comecei\n");
-  
+
   /* faz alguma coisa pra gastar tempo... */
   boba1=10000; boba2=-10000; while (boba2 < boba1) boba2++;
-  
+
   printf("HELLO\n");
 
   pthread_mutex_lock(&x_mutex);
@@ -43,19 +43,19 @@ void *B (void *t) {
   printf("B: Comecei\n");
 
   pthread_mutex_lock(&x_mutex);
-  if (x < 2) { 
+  if (x < 2) {
      printf("B: x= %d, vai se bloquear...\n", x);
      pthread_cond_wait(&x_cond, &x_mutex);
      printf("B: sinal recebido e mutex realocado, x = %d\n", x);
   }
   printf("BYE\n");
-  pthread_mutex_unlock(&x_mutex); 
+  pthread_mutex_unlock(&x_mutex);
   pthread_exit(NULL);
 }
 
 /* Funcao principal */
 int main(int argc, char *argv[]) {
-  int i; 
+  int i;
   pthread_t threads[NTHREADS];
 
   /* Inicilaiza o mutex (lock de exclusao mutua) e a variavel de condicao */
