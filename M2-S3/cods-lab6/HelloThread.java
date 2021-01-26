@@ -4,18 +4,18 @@
 /* Codigo: "Hello World" usando threads em Java */
 
 
-//--PASSO 1: criar uma classe que implementa a interface Runnable 
+//--PASSO 1: criar uma classe que implementa a interface Runnable
 class Hello implements Runnable {
    private String msg;
-   
+
    //--construtor
-   public Hello(String m) { 
-      this.msg = m; 
+   public Hello(String m) {
+      this.msg = m;
    }
 
    //--metodo executado pela thread
    public void run() {
-      System.out.println(msg); 
+      System.out.println(msg);
    }
 }
 
@@ -40,11 +40,11 @@ class HelloThread {
       }
 
       //--PASSO 4: esperar pelo termino das threads
-      /*for (int i=0; i<threads.length; i++) {
-            try { threads[i].join(); } 
+      for (int i=0; i<threads.length; i++) {
+            try { threads[i].join(); }
             catch (InterruptedException e) { return; }
-      }*/ 
+      }
 
-      System.out.println("Terminou"); 
+      System.out.println("Terminou");
    }
 }
