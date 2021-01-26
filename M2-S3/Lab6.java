@@ -119,12 +119,12 @@ class MainSomaVetor {
 			threads[i] = new Thread(new Soma(A, B, C, inicio, fim));
 		}
 
-		//inicia as threads
+		// Inicia as threads
 		for (int i=0; i<threads.length; i++) {
 			threads[i].start();
 		}
 
-		//espera pelo termino de todas as threads
+		// Espera pelo termino de todas as threads
 		for (int i=0; i<threads.length; i++) {
 			try { threads[i].join(); } catch (InterruptedException e) { return; }
 		}
