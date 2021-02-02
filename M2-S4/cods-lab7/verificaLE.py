@@ -34,5 +34,3 @@ class LE:
 	def escritorSaindo(self,id):
 		'''Recebe o id do escritor e registra que terminou a leitura.'''
 		self.escritores-=1
-
-

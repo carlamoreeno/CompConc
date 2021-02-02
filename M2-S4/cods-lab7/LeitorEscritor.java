@@ -5,48 +5,48 @@
 
 // Monitor
 class LE {
-  private int leit, escr;  
-  
+  private int leit, escr;
+
   // Construtor
-  LE() { 
+  LE() {
      this.leit = 0; //leitores lendo (0 ou mais)
      this.escr = 0; //escritor escrevendo (0 ou 1)
-  } 
-  
+  }
+
   // Entrada para leitores
   public synchronized void EntraLeitor (int id) {
-    try { 
+    try {
       while (this.escr > 0) {
       //if (this.escr > 0) {
          System.out.println ("le.leitorBloqueado("+id+")");
-         wait();  //bloqueia pela condicao logica da aplicacao 
+         wait();  //bloqueia pela condicao logica da aplicacao
       }
       this.leit++;  //registra que ha mais um leitor lendo
       System.out.println ("le.leitorLendo("+id+")");
     } catch (InterruptedException e) { }
   }
-  
+
   // Saida para leitores
   public synchronized void SaiLeitor (int id) {
      this.leit--; //registra que um leitor saiu
-     if (this.leit == 0) 
+     if (this.leit == 0)
            this.notify(); //libera escritor (caso exista escritor bloqueado)
      System.out.println ("le.leitorSaindo("+id+")");
   }
-  
+
   // Entrada para escritores
   public synchronized void EntraEscritor (int id) {
-    try { 
+    try {
       while ((this.leit > 0) || (this.escr > 0)) {
       //if ((this.leit > 0) || (this.escr > 0)) {
          System.out.println ("le.escritorBloqueado("+id+")");
-         wait();  //bloqueia pela condicao logica da aplicacao 
+         wait();  //bloqueia pela condicao logica da aplicacao
       }
       this.escr++; //registra que ha um escritor escrevendo
       System.out.println ("le.escritorEscrevendo("+id+")");
     } catch (InterruptedException e) { }
   }
-  
+
   // Saida para escritores
   public synchronized void SaiEscritor (int id) {
      this.escr--; //registra que o escritor saiu
@@ -77,7 +77,7 @@ class Leitor extends Thread {
         this.monitor.EntraLeitor(this.id);
         for (i=0; i<100000000; i++) {j=j/2;} //...loop bobo para simbolizar o tempo de leitura
         this.monitor.SaiLeitor(this.id);
-        sleep(this.delay); 
+        sleep(this.delay);
       }
     } catch (InterruptedException e) { return; }
   }
@@ -102,9 +102,9 @@ class Escritor extends Thread {
     double j=777777777.7, i;
     try {
       for (;;) {
-        this.monitor.EntraEscritor(this.id); 
+        this.monitor.EntraEscritor(this.id);
         for (i=0; i<100000000; i++) {j=j/2;} //...loop bobo para simbolizar o tempo de escrita
-        this.monitor.SaiEscritor(this.id); 
+        this.monitor.SaiEscritor(this.id);
         sleep(this.delay); //atraso bobo...
       }
     } catch (InterruptedException e) { return; }
@@ -126,14 +126,14 @@ class LeitorEscritor {
     //inicia o log de saida
     System.out.println ("import verificaLE");
     System.out.println ("le = verificaLE.LE()");
-    
+
     for (i=0; i<L; i++) {
        l[i] = new Leitor(i+1, (i+1)*500, monitor);
-       l[i].start(); 
+       l[i].start();
     }
     for (i=0; i<E; i++) {
        e[i] = new Escritor(i+1, (i+1)*500, monitor);
-       e[i].start(); 
+       e[i].start();
     }
   }
 }
